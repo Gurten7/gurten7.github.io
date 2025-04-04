@@ -403,232 +403,294 @@ function resetTimer() {
       .then(() => console.log('✅ Service Worker geregistreerd'))
       .catch(err => console.error('❌ Service Worker fout:', err));
 }
-});
-</script>
-
-<style>
-  body {
- /* Basis styling */
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #650409;
-  margin: 0;
-}
-
-h1 {
-  font-size: 80px;
-  display: none;
-}
-
-.timer-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-.timer {
-  width: 360px;
-  height: 300px;
-  border: 6px solid white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 70px;
-  font-weight: bold;
-  color: white;
-  background-color: #650409;
-  border-radius: 20px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.team-name {
-  font-size: 30px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.team-input {
-  font-size: 30px;
-  font-weight: bold;
-  width: 80%;
-  text-align: center;
-  border: none;
-  outline: none;
-}
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 60px;
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-button {
-  background-color: #F8AF00;
-  color: black;
-  border: none;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 5px;
-  width: auto;
-  max-width: 120px;
-}
-
-.selected {
-  border: 8px solid #F8AF00;
-}
-
-/* Alleen voor view=display */
-body.display-mode {
-  padding: 60px 20px;
-}
-
-body.display-mode .timer-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin: 60px auto;
-  padding: 0 20px;
-  max-width: 100%;
-}
-
-/* Timers in display-mode, ook mobiel */
-body.display-mode .timer {
-  width: 360px;
-  height: 300px;
-  font-size: 70px;
-}
-
-@media (max-width: 768px) {
-  /* Responsieve styling voor zowel display- als niet-displaymodus */
-
-  /* Voor de display-modus */
-  body.display-mode .timer {
-    width: 100%;  /* Zorg ervoor dat de timers de volledige breedte gebruiken */
-    max-width: 260px;  /* Beperk de maximale breedte voor mobiele apparaten */
-    font-size: 40px;  /* Verklein de tekstgrootte op kleinere schermen */
-  }
-
-  body.display-mode .team-name {
-    font-size: 18px;  /* Verklein de naam van het team op kleinere schermen */
-  }
-
-  /* Voor de niet-displaymodus (editmodus) */
-  body:not(.display-mode) .timer {
-    width: 260px;
-    height: 230px;
-    font-size: 50px;  /* Verklein de timergrootte */
-  }
-
-  body:not(.display-mode) .team-name {
-    font-size: 18px;  /* Verklein de naam van het team in edit-modus */
-  }
-
-  body:not(.display-mode) .controls {
-    width: 90%;  /* Zorg ervoor dat de knoppen goed passen op kleinere schermen */
-  }
-
-  body:not(.display-mode) .timer-container {
-    flex-direction: row;
-  }
-
-  body:not(.display-mode) button {
-    font-size: 12px;
-  }
-}
-
-/* Logo zichtbaar maken in display-modus */
-#dsk-logo {
-  display: none;
-  margin: 40px auto 20px;
-  width: 200px;
-}
-
-body.display-mode #dsk-logo {
-  display: block;
-}
-</head>
-<body>
-    <div id="audio-init-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.9;z-index:9999;color:#fff;display:flex;justify-content:center;align-items:center;font-size:24px;cursor:pointer;">
-  Klik om te starten
-</div>
-
-    <h1>De Slimste Kameraad</h1>
-    <div class="timer-container">
-        <div class="timer" id="timer-container-0">
-            <div id="team-name-0" class="team-name">Team 1</div>
-            <div id="timer0">60</div>
-        </div>
-        <div class="timer" id="timer-container-1">
-            <div id="team-name-1" class="team-name">Team 2</div>
-            <div id="timer1">60</div>
-        </div>
-        <div class="timer" id="timer-container-2">
-            <div id="team-name-2" class="team-name">Team 3</div>
-            <div id="timer2">60</div>
-        </div>
-        <div class="timer" id="timer-container-3">
-            <div id="team-name-3" class="team-name">Team 4</div>
-            <div id="timer3">60</div>
-        </div>
-    </div>
-
-    <!-- Voeg het audio element toe voor de timer en stop geluid -->
-    <audio id="timerSound" preload="auto">
-        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/timer-sound.mp3" type="audio/mp3">
-        Je browser ondersteunt het afspelen van audio niet.
-    </audio>
-    <audio id="timerEndSound" preload="auto">
-        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/timer-sound-end.mp3" type="audio/mp3">
-        Je browser ondersteunt het afspelen van audio niet.
-    </audio>
-    <audio id="finaleSound" preload="auto">
-        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/Sound-finale.mp3" type="audio/mp3">
-        Je browser ondersteunt het afspelen van audio niet.
-    </audio>
-
-    <div class="controls">
-        <div class="row">
-            <button id="startBtn" class="hide-if-needed">Start</button>
-            <button id="stopBtn" class="hide-if-needed">Stop</button>
-            <button id="resetBtn" class="hide-if-needed">Reset</button>
-            <button class="adjust-time hide-if-needed" data-amount="10">+10 sec</button>
-            <button class="adjust-time hide-if-needed" data-amount="20">+20 sec</button>
-            <button class="adjust-time hide-if-needed" data-amount="30">+30 sec</button>
-            <button class="adjust-time hide-if-needed" data-amount="40">+40 sec</button>
-            <button class="adjust-time hide-if-needed" data-amount="50">+50 sec</button>
-            <button class="adjust-time hide-if-needed" data-amount="-20">-20 sec</button>
-        </div>
-        <div class="row">
-            <select id="timerSelect" class="hide-if-needed">
-                <option value="0">Timer 1</option>
-                <option value="1">Timer 2</option>
-                <option value="2">Timer 3</option>
-                <option value="3">Timer 4</option>
-            </select>
-            <button id="toggleBtn" class="hide-if-needed">Zichtbaar ja/nee</button>
-            <input type="number" id="timeInput" placeholder="Voer seconden in" class="hide-if-needed">
-            <button id="setTimeBtn" class="hide-if-needed">Doorvoeren</button>
-        </div>
-    </div>
-  <img id="dsk-logo" src="DSK.png" alt="Logo De Slimste Kameraad">
+     });
+ </script>
+   <style>
+   body {
+     font-family: Arial, sans-serif;
+     text-align: center;
+     background-color: #650409;
+     margin: 0;
+   }
+ 
+   h1 {
+     font-size: 80px;
+     display: none;
+   }
+  /* Basis styling */
+ body {
+   font-family: Arial, sans-serif;
+   text-align: center;
+   background-color: #650409;
+   margin: 0;
+ }
+ 
+   .timer-container {
+     display: flex;
+     justify-content: center;
+     gap: 20px;
+     margin-bottom: 20px;
+     flex-wrap: nowrap;
+     overflow-x: auto;
+   }
+ h1 {
+   font-size: 80px;
+   display: none;
+ }
+ 
+   .timer {
+     width: 360px;
+     height: 300px;
+     border: 6px solid white;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     font-size: 70px;
+     font-weight: bold;
+     color: white;
+     background-color: #650409;
+     border-radius: 20px;
+     text-align: center;
+     flex-shrink: 0;
+   }
+ .timer-container {
+   display: flex;
+   justify-content: center;
+   gap: 20px;
+   margin-bottom: 20px;
+   flex-wrap: nowrap;
+   overflow-x: auto;
+ }
+ 
+   .team-name {
+     font-size: 30px;
+     font-weight: bold;
+     color: white;
+     cursor: pointer;
+     margin-bottom: 20px;
+     text-align: center;
+   }
+ .timer {
+   width: 360px;
+   height: 300px;
+   border: 6px solid white;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   font-size: 70px;
+   font-weight: bold;
+   color: white;
+   background-color: #650409;
+   border-radius: 20px;
+   text-align: center;
+   flex-shrink: 0;
+ }
+ 
+   .team-input {
+     font-size: 30px;
+     font-weight: bold;
+     width: 80%;
+     text-align: center;
+     border: none;
+     outline: none;
+   }
+ .team-name {
+   font-size: 30px;
+   font-weight: bold;
+   color: white;
+   cursor: pointer;
+   margin-bottom: 20px;
+   text-align: center;
+ }
+ 
+   .controls {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 10px;
+     margin-top: 60px;
+   }
+ .team-input {
+   font-size: 30px;
+   font-weight: bold;
+   width: 80%;
+   text-align: center;
+   border: none;
+   outline: none;
+ }
+ 
+   .row {
+     display: flex;
+     justify-content: center;
+     gap: 10px;
+     flex-wrap: wrap;
+   }
+ .controls {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 10px;
+   margin-top: 60px;
+ }
+ 
+   button {
+     background-color: #F8AF00;
+     color: black;
+     border: none;
+     padding: 10px;
+     font-size: 14px;
+     border-radius: 5px;
+     width: auto;
+     max-width: 120px;
+   }
+ .row {
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+   flex-wrap: wrap;
+ }
+ 
+   .selected {
+     border: 8px solid #F8AF00;
+   }
+ button {
+   background-color: #F8AF00;
+   color: black;
+   border: none;
+   padding: 10px;
+   font-size: 14px;
+   border-radius: 5px;
+   width: auto;
+   max-width: 120px;
+ }
+ 
+   /* Alleen voor view=display */
+   body.display-mode {
+     padding: 60px 20px;
+   }
+ .selected {
+   border: 8px solid #F8AF00;
+ }
+ 
+   body.display-mode .timer-container {
+     display: flex;
+     justify-content: center;
+     flex-wrap: wrap;
+     gap: 20px;
+     margin: 60px auto;
+     padding: 0 20px;
+     max-width: 1000px;
+   }
+ /* Alleen voor view=display */
+ body.display-mode {
+   padding: 60px 20px;
+ }
+ 
+   /* ✨ Timers in display-mode, ook mobiel */
+   body.display-mode .timer {
+     width: 360px;
+     height: 300px;
+     font-size: 70px;
+   }
+ body.display-mode .timer-container {
+   display: flex;
+   justify-content: center;
+   flex-wrap: wrap;
+   gap: 20px;
+   margin: 60px auto;
+   padding: 0 20px;
+   max-width: 100%;
+ }
+ 
+   @media (max-width: 768px) {
+     body.display-mode .timer {
+       width: 260px;
+       height: 230px;
+       font-size: 50px;
+     }
+ /* Timers in display-mode, ook mobiel */
+ body.display-mode .timer {
+   width: 360px;
+   height: 300px;
+   font-size: 70px;
+ }
+ 
+     body.display-mode .team-name {
+       font-size: 18px;
+     }
+ @media (max-width: 768px) {
+   /* Responsieve styling voor zowel display- als niet-displaymodus */
+ 
+     body:not(.display-mode) .timer {
+       width: 260px;
+       height: 230px;
+       font-size: 50px;
+     }
+   /* Voor de display-modus */
+   body.display-mode .timer {
+     width: 100%;  /* Zorg ervoor dat de timers de volledige breedte gebruiken */
+     max-width: 260px;  /* Beperk de maximale breedte voor mobiele apparaten */
+     font-size: 40px;  /* Verklein de tekstgrootte op kleinere schermen */
+   }
+ 
+     body:not(.display-mode) .team-name {
+       font-size: 18px;
+     }
+   body.display-mode .team-name {
+     font-size: 18px;  /* Verklein de naam van het team op kleinere schermen */
+   }
+ 
+     body:not(.display-mode) .controls {
+       width: 90%;
+     }
+   /* Voor de niet-displaymodus (editmodus) */
+   body:not(.display-mode) .timer {
+     width: 260px;
+     height: 230px;
+     font-size: 50px;  /* Verklein de timergrootte */
+   }
+ 
+     body:not(.display-mode) .timer-container {
+       flex-direction: row;
+     }
+   body:not(.display-mode) .team-name {
+     font-size: 18px;  /* Verklein de naam van het team in edit-modus */
+   }
+ 
+     body:not(.display-mode) button {
+       font-size: 12px;
+     }
+   body:not(.display-mode) .controls {
+     width: 90%;  /* Zorg ervoor dat de knoppen goed passen op kleinere schermen */
+   }
+ 
+   #dsk-logo {
+     display: none;
+     margin: 40px auto 20px;
+     width: 200px;
+   body:not(.display-mode) .timer-container {
+     flex-direction: row;
+   }
+ 
+   body.display-mode #dsk-logo {
+     display: block;
+   body:not(.display-mode) button {
+     font-size: 12px;
+   }
+ </style>
+ }
+ 
+ /* Logo zichtbaar maken in display-modus */
+ #dsk-logo {
+   display: none;
+   margin: 40px auto 20px;
+   width: 200px;
+ }
+ 
+ body.display-mode #dsk-logo {
+   display: block;
+ }
 </body>
 </html>
