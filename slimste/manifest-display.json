@@ -1,11 +1,10 @@
 {
-  "name": "De Slimste Kameraad",
-  "short_name": "Slimste Kameraad",
-  "start_url": "/slimste/index",
+  "name": "Slimste Kameraad Display",
+  "short_name": "Display",
+  "start_url": "/slimste/index?view=display",
   "display": "standalone",
-  "background_color": "#650409",
   "theme_color": "#650409",
-  "description": "De officiële timer voor De Slimste Kameraad!",
+  "background_color": "#650409",
   "icons": [
     {
       "src": "icon-192.png",
