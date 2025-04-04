@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="slimste/manifest.json">
     <meta name="theme-color" content="#650409">
     <meta name="theme-color" content="#650409">
     <title>De Slimste Kameraad</title>
@@ -365,7 +365,7 @@ function resetTimer() {
     }
 // ✅ Service Worker registratie voor PWA
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('slimste/service-worker.js')
       .then(() => console.log('✅ Service Worker geregistreerd'))
       .catch(err => console.error('❌ Service Worker fout:', err));
   }
