@@ -1,1 +1,568 @@
-AA
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#650409">
+    <meta name="theme-color" content="#650409">
+    <title>De Slimste Kameraad</title>
+    <!-- Oude versie van Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => {
+    const isDisplayMode = new URLSearchParams(window.location.search).get("view") === "display";
+    if (isDisplayMode) {
+      document.body.classList.add("display-mode");
+    }
+
+  // ✅ Audio-initialisatie overlay (tegen NotAllowedError)
+  document.getElementById("audio-init-overlay").addEventListener("click", () => {
+    [timerSound, timerEndSound, finaleSound].forEach(audio => {
+      audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+      }).catch(console.log);
+    });
+    document.getElementById("audio-init-overlay").style.display = "none";
+  });
+
+  // 🔽 daarna volgt je firebaseConfig + de rest van je script
+
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "slimste-kameraad-timer.firebaseapp.com",
+      databaseURL: "https://slimste-kameraad-timer-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "slimste-kameraad-timer",
+      storageBucket: "slimste-kameraad-timer.appspot.com",
+      messagingSenderId: "37865286019",
+      appId: ""
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let timers = [60, 60, 60, 60];
+    let teamNamen = ["Team 1", "Team 2", "Team 3", "Team 4"];
+    let intervals = [null, null, null, null];
+    let geselecteerdeTimer = 0;
+    let zichtbareTimers = [true, true, true, true];
+    let finaleGeluidGespeeld = [false, false, false, false];
+    let timerIsRunning = false;
+
+    const timerSound = document.getElementById("timerSound");
+    const timerEndSound = document.getElementById("timerEndSound");
+    const finaleSound = document.getElementById("finaleSound");
+
+    const timerSoundRef = firebase.database().ref("playTimerSound");
+    const finaleSoundRef = firebase.database().ref("playFinaleSound");
+    const timerStatusRef = firebase.database().ref("timerStatus");
+    const stopSoundRef = firebase.database().ref("playStopSound");
+
+    timerSoundRef.on("value", (snapshot) => {
+      if (snapshot.val() === true) {
+        timerSound.play().catch(console.log);
+        timerSoundRef.set(false);
+      }
+    });
+
+    finaleSoundRef.on("value", (snapshot) => {
+      if (snapshot.val() === true) {
+        finaleSound.play().catch(console.log);
+        finaleSoundRef.set(false);
+      }
+    });
+
+    stopSoundRef.on("value", (snapshot) => {
+      if (snapshot.val() === true) {
+        timerEndSound.play().catch(console.log);
+        stopSoundRef.set(false);
+      }
+    });
+
+    timerStatusRef.on("value", (snapshot) => {
+      const status = snapshot.val();
+      if (status === "start") startTimer();
+      else if (status === "stop") stopTimer();
+      else if (status === "reset") resetTimer();
+    });
+
+    function hideIfNeeded() {
+      const elementsToHide = document.querySelectorAll(".hide-if-needed");
+      const elementsToDisable = document.querySelectorAll(".timer, .team-name, .team-input");
+      if (isDisplayMode) {
+        elementsToHide.forEach(el => el.style.display = "none");
+        elementsToDisable.forEach(el => el.style.pointerEvents = "none");
+        document.querySelectorAll(".team-input").forEach(el => el.setAttribute("disabled", true));
+      } else {
+        elementsToHide.forEach(el => el.style.display = "block");
+        elementsToDisable.forEach(el => el.style.pointerEvents = "auto");
+        document.querySelectorAll(".team-input").forEach(el => el.removeAttribute("disabled"));
+      }
+    }
+
+    function updateWeergave() {
+      timers.forEach((tijd, index) => {
+        const timerElement = document.getElementById(`timer${index}`);
+        if (timerElement) timerElement.textContent = tijd;
+
+        const teamNaamEl = document.getElementById(`team-name-${index}`);
+        if (teamNaamEl) {
+          if (teamNaamEl.tagName.toLowerCase() === "input") {
+            let nieuwNaamDiv = document.createElement("div");
+            nieuwNaamDiv.id = `team-name-${index}`;
+            nieuwNaamDiv.classList.add("team-name");
+            nieuwNaamDiv.textContent = teamNamen[index];
+            nieuwNaamDiv.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
+            teamNaamEl.replaceWith(nieuwNaamDiv);
+          } else {
+            teamNaamEl.textContent = teamNamen[index];
+            teamNaamEl.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
+          }
+        }
+
+        document.getElementById(`timer-container-${index}`).style.display = zichtbareTimers[index] ? "block" : "none";
+      });
+    }
+
+    function selecteerTimer(index) {
+      if (intervals[geselecteerdeTimer]) return;
+      document.querySelectorAll(".timer").forEach(el => el.classList.remove("selected"));
+      geselecteerdeTimer = index;
+      document.getElementById(`timer-container-${index}`).classList.add("selected");
+      document.getElementById("timerSelect").value = index;
+      firebase.database().ref("selectedTimer").set(index);
+    }
+
+   function startTimer() {
+  if (timerIsRunning || intervals[geselecteerdeTimer]) {
+    console.log("⛔ Timer is al gestart, dubbele trigger voorkomen.");
+    return;
+  }
+
+  console.log(`⏳ Start timer ${geselecteerdeTimer}`);
+  timerIsRunning = true;
+
+  intervals[geselecteerdeTimer] = setInterval(() => {
+    if (timers[geselecteerdeTimer] > 0) {
+      timers[geselecteerdeTimer]--;
+      updateWeergave();
+      updateDatabase();
+    } else if (timers[geselecteerdeTimer] === 0) {
+      clearInterval(intervals[geselecteerdeTimer]);
+      intervals[geselecteerdeTimer] = null;
+      timerSound.pause();
+      timerSound.currentTime = 0;
+      timerIsRunning = false;
+
+      if (!finaleGeluidGespeeld[geselecteerdeTimer]) {
+        finaleSound.play().catch(console.log);
+        finaleGeluidGespeeld[geselecteerdeTimer] = true;
+      }
+
+      timerEndSound.play().catch(console.log);
+
+      // Zorg dat de timers weer vrijgegeven worden zodra ze op 0 staan
+      document.querySelectorAll(".timer").forEach(el => el.style.pointerEvents = "auto");
+       // Maak de dropdown weer beschikbaar
+      document.getElementById("timerSelect").removeAttribute("disabled");
+    }
+  }, 1000);
+
+  timerSound.play().catch(console.log);
+  document.querySelectorAll(".timer").forEach(el => el.style.pointerEvents = "none");
+  finaleGeluidGespeeld[geselecteerdeTimer] = false;
+}
+
+function stopTimer() {
+  clearInterval(intervals[geselecteerdeTimer]);
+  intervals[geselecteerdeTimer] = null;
+  timerIsRunning = false;
+
+  timerSound.pause();
+  timerSound.currentTime = 0;
+
+  setTimeout(() => {
+    timerEndSound.play().catch(console.log);
+  }, 100);
+
+  document.querySelectorAll(".timer").forEach(el => el.style.pointerEvents = "auto");
+}
+
+function resetTimer() {
+  // Zet alle timers terug naar 60 seconden
+  timers = [60, 60, 60, 60];
+
+  // Zet de vlaggen voor finale geluiden terug
+  finaleGeluidGespeeld = [false, false, false, false];
+
+  // Zorg dat je opnieuw kunt starten
+  timerIsRunning = false;
+
+  // Werk de weergave en Firebase bij
+  updateWeergave();
+  updateDatabase();
+
+  // Stop eventuele lopende timers
+  intervals.forEach((interval, index) => {
+    if (interval) {
+      clearInterval(interval);
+      intervals[index] = null;
+    }
+  });
+
+  // Stop en reset alle audio
+  [timerSound, timerEndSound, finaleSound].forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+
+  // Zet klikbaarheid van timers weer aan (alleen in editmode)
+  document.querySelectorAll(".timer").forEach(el => el.style.pointerEvents = "auto");
+
+  console.log("🔁 Timer is gereset.");
+}
+
+   function pasTijdAan(aantal) {
+  timers[geselecteerdeTimer] = Math.max(0, timers[geselecteerdeTimer] + aantal);
+  updateWeergave();
+  updateDatabase();
+}
+          
+    function toggleTimerZichtbaarheid() {
+      zichtbareTimers[geselecteerdeTimer] = !zichtbareTimers[geselecteerdeTimer];
+      updateWeergave();
+      updateDatabase();
+      firebase.database().ref("timerVisibility").set({
+        timer1: zichtbareTimers[0],
+        timer2: zichtbareTimers[1],
+        timer3: zichtbareTimers[2],
+        timer4: zichtbareTimers[3],
+      });
+    }
+
+    function stelAangepasteTijdIn() {
+      const invoerSeconden = parseInt(document.getElementById("timeInput").value);
+      if (!isNaN(invoerSeconden) && invoerSeconden >= 0) {
+        timers[geselecteerdeTimer] = invoerSeconden;
+        updateWeergave();
+        updateDatabase();
+      } else {
+        alert("Voer een geldig aantal seconden in (minimaal 0)");
+      }
+    }
+
+    function maakTeamnaamBewerkbaar(index) {
+      let naamLabel = document.getElementById(`team-name-${index}`);
+      if (naamLabel && naamLabel.tagName.toLowerCase() !== "input") {
+        let inputVeld = document.createElement("input");
+        inputVeld.type = "text";
+        inputVeld.value = teamNamen[index];
+        inputVeld.classList.add("team-input");
+        inputVeld.style.fontSize = "30px";
+        inputVeld.style.width = "80%";
+        inputVeld.style.textAlign = "center";
+        naamLabel.replaceWith(inputVeld);
+        inputVeld.focus();
+        inputVeld.addEventListener("blur", () => slaNieuweTeamnaamOp(index, inputVeld.value));
+        inputVeld.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") inputVeld.blur();
+        });
+      }
+    }
+
+    function slaNieuweTeamnaamOp(index, nieuweNaam) {
+      if (nieuweNaam.trim() !== "") teamNamen[index] = nieuweNaam;
+      updateWeergave();
+      updateDatabase();
+    }
+
+    function updateDatabase() {
+      firebase.database().ref("timers").set({
+        team1: timers[0],
+        team2: timers[1],
+        team3: timers[2],
+        team4: timers[3]
+      });
+      firebase.database().ref("teamNames").set({
+        team1: teamNamen[0],
+        team2: teamNamen[1],
+        team3: teamNamen[2],
+        team4: teamNamen[3]
+      });
+    }
+
+    function syncTimers() {
+      firebase.database().ref("timers").on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          timers = [data.team1, data.team2, data.team3, data.team4];
+          updateWeergave();
+        }
+      });
+      firebase.database().ref("teamNames").on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          teamNamen = [data.team1, data.team2, data.team3, data.team4];
+          updateWeergave();
+          selecteerTimer(geselecteerdeTimer);
+        }
+      });
+      firebase.database().ref("selectedTimer").on("value", (snapshot) => {
+        const selectedTimer = snapshot.val();
+        if (selectedTimer !== null) selecteerTimer(selectedTimer);
+      });
+    }
+
+    function syncVisibility() {
+      firebase.database().ref("timerVisibility").on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          zichtbareTimers = [data.timer1, data.timer2, data.timer3, data.timer4];
+          updateWeergave();
+        }
+      });
+    }
+
+    function checkAndInitializeDatabase() {
+      const db = firebase.database();
+      db.ref("timers").once("value", snap => { if (!snap.exists()) db.ref("timers").set({ team1: 60, team2: 60, team3: 60, team4: 60 }); });
+      db.ref("teamNames").once("value", snap => { if (!snap.exists()) db.ref("teamNames").set({ team1: "Team 1", team2: "Team 2", team3: "Team 3", team4: "Team 4" }); });
+      db.ref("selectedTimer").once("value", snap => { if (!snap.exists()) db.ref("selectedTimer").set(0); });
+      db.ref("timerVisibility").once("value", snap => { if (!snap.exists()) db.ref("timerVisibility").set({ timer1: true, timer2: true, timer3: true, timer4: true }); });
+    }
+
+    checkAndInitializeDatabase();
+    syncTimers();
+    syncVisibility();
+    hideIfNeeded();
+
+    if (!isDisplayMode) {
+      document.querySelectorAll(".timer").forEach((el, index) => {
+        el.addEventListener("click", () => selecteerTimer(index));
+      });
+      document.getElementById("timerSelect").addEventListener("change", (e) => selecteerTimer(parseInt(e.target.value)));
+      document.getElementById("startBtn").addEventListener("click", () => {
+        timerStatusRef.set("start");
+        document.getElementById("timerSelect").setAttribute("disabled", true);
+      });
+      document.getElementById("stopBtn").addEventListener("click", () => {
+        timerStatusRef.set("stop");
+        document.getElementById("timerSelect").removeAttribute("disabled");
+      });
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        timerStatusRef.set("reset");
+        document.getElementById("timerSelect").removeAttribute("disabled");
+      });
+      document.getElementById("toggleBtn").addEventListener("click", toggleTimerZichtbaarheid);
+      document.getElementById("setTimeBtn").addEventListener("click", stelAangepasteTijdIn);
+      document.querySelectorAll(".adjust-time").forEach(btn => {
+        btn.addEventListener("click", () => pasTijdAan(parseInt(btn.dataset.amount)));
+      });
+    } else {
+      document.getElementById("timerSelect").setAttribute("disabled", true);
+    }
+// ✅ Service Worker registratie voor PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('✅ Service Worker geregistreerd'))
+      .catch(err => console.error('❌ Service Worker fout:', err));
+  }
+    });
+</script>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #650409;
+    }
+
+    h1 {
+        font-size: 80px;
+        display: none;
+    }
+
+    .timer-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .timer {
+        width: 360px;
+        height: 300px;
+        border: 6px solid white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 70px;
+        font-weight: bold;
+        color: white;
+        background-color: #650409;
+        border-radius: 20px;
+        text-align: center;
+    }
+
+.team-name {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+    .team-input {
+        font-size: 30px;
+        font-weight: bold;
+        width: 80%;
+        text-align: center;
+        border: none;
+        outline: none;
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 60px;
+    }
+
+    .row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    button {
+        background-color: #F8AF00;
+        color: black;
+        border: none;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        width: auto;
+        max-width: 120px;
+    }
+
+    .selected {
+        border: 8px solid #F8AF00;
+    }
+
+    /* Alleen voor view=display */
+    body.display-mode {
+        padding: 60px 20px;
+    }
+
+    .display-mode .timer-container {
+        margin: 60px auto;
+        max-width: 1000px;
+        padding: 0 20px;
+    }
+
+    /* Responsieve styling alleen voor NIET-display mode */
+  @media (max-width: 768px) {
+    body:not(.display-mode) .timer {
+        width: 260px;
+        height: 230px;
+        font-size: 50px;
+    }
+
+    body:not(.display-mode) .team-name {
+        font-size: 18px;
+    }
+
+    body:not(.display-mode) .controls {
+        width: 90%;
+    }
+
+    body:not(.display-mode) .timer-container {
+        flex-direction: row;
+    }
+
+    body:not(.display-mode) button {
+        font-size: 12px;
+    }
+}
+
+/* ✨ Altijd voor view=display, onafhankelijk van schermformaat */
+body.display-mode .timer {
+    width: 360px;
+    height: 300px;
+    font-size: 70px;
+}
+
+</style>
+</head>
+<body>
+    <div id="audio-init-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.9;z-index:9999;color:#fff;display:flex;justify-content:center;align-items:center;font-size:24px;cursor:pointer;">
+  Klik om te starten
+</div>
+
+    <h1>De Slimste Kameraad</h1>
+    <div class="timer-container">
+        <div class="timer" id="timer-container-0">
+            <div id="team-name-0" class="team-name">Team 1</div>
+            <div id="timer0">60</div>
+        </div>
+        <div class="timer" id="timer-container-1">
+            <div id="team-name-1" class="team-name">Team 2</div>
+            <div id="timer1">60</div>
+        </div>
+        <div class="timer" id="timer-container-2">
+            <div id="team-name-2" class="team-name">Team 3</div>
+            <div id="timer2">60</div>
+        </div>
+        <div class="timer" id="timer-container-3">
+            <div id="team-name-3" class="team-name">Team 4</div>
+            <div id="timer3">60</div>
+        </div>
+    </div>
+
+    <!-- Voeg het audio element toe voor de timer en stop geluid -->
+    <audio id="timerSound" preload="auto">
+        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/timer-sound.mp3" type="audio/mp3">
+        Je browser ondersteunt het afspelen van audio niet.
+    </audio>
+    <audio id="timerEndSound" preload="auto">
+        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/timer-sound-end.mp3" type="audio/mp3">
+        Je browser ondersteunt het afspelen van audio niet.
+    </audio>
+    <audio id="finaleSound" preload="auto">
+        <source src="https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/Sound-finale.mp3" type="audio/mp3">
+        Je browser ondersteunt het afspelen van audio niet.
+    </audio>
+
+    <div class="controls">
+        <div class="row">
+            <button id="startBtn" class="hide-if-needed">Start</button>
+            <button id="stopBtn" class="hide-if-needed">Stop</button>
+            <button id="resetBtn" class="hide-if-needed">Reset</button>
+            <button class="adjust-time hide-if-needed" data-amount="10">+10 sec</button>
+            <button class="adjust-time hide-if-needed" data-amount="20">+20 sec</button>
+            <button class="adjust-time hide-if-needed" data-amount="30">+30 sec</button>
+            <button class="adjust-time hide-if-needed" data-amount="40">+40 sec</button>
+            <button class="adjust-time hide-if-needed" data-amount="50">+50 sec</button>
+            <button class="adjust-time hide-if-needed" data-amount="-20">-20 sec</button>
+        </div>
+        <div class="row">
+            <select id="timerSelect" class="hide-if-needed">
+                <option value="0">Timer 1</option>
+                <option value="1">Timer 2</option>
+                <option value="2">Timer 3</option>
+                <option value="3">Timer 4</option>
+            </select>
+            <button id="toggleBtn" class="hide-if-needed">Zichtbaar ja/nee</button>
+            <input type="number" id="timeInput" placeholder="Voer seconden in" class="hide-if-needed">
+            <button id="setTimeBtn" class="hide-if-needed">Doorvoeren</button>
+        </div>
+    </div>
+</body>
+</html>
