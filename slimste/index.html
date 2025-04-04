@@ -438,7 +438,7 @@ body.display-mode .timer {
     font-size: 70px;
 }
 
-/* Responsieve styling alleen voor NIET-display mode */
+/* Responsieve styling voor mobiele schermen */
 @media (max-width: 768px) {
     body:not(.display-mode) .timer-container {
         flex-wrap: wrap;
@@ -447,7 +447,7 @@ body.display-mode .timer {
 
     body:not(.display-mode) .timer {
         width: 100%; /* Zorg ervoor dat de timer de volledige breedte van het scherm gebruikt */
-        max-width: 300px; /* Zorg ervoor dat de timer niet te groot wordt */
+        max-width: 280px; /* Beperk de maximale breedte van de timer */
         height: auto;
         font-size: 50px; /* Verklein de tekstgrootte voor kleinere schermen */
     }
