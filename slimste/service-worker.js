@@ -1,12 +1,12 @@
 const cacheName = 'slimste-kameraad-v1';
 const assets = [
-  './',
-  './index.html',
+  './index',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  'https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/timer-sound-end.mp3',
-  'https://raw.githubusercontent.com/Gurten7/Timer-ppt/main/audio/Sound-finale.mp3'
+  './timer-sound.mp3',
+  './timer-sound-end.mp3',
+  './Sound-finale.mp3'
 ];
 
 self.addEventListener('install', evt => {
