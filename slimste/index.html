@@ -397,144 +397,160 @@ function resetTimer() {
   }
     });
 </script>
-    <style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        background-color: #650409;
-    }
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #650409;
+    margin: 0;
+  }
 
-    h1 {
-        font-size: 80px;
-        display: none;
-    }
+  h1 {
+    font-size: 80px;
+    display: none;
+  }
 
-    .timer-container {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 20px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-    }
+  .timer-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
 
-    .timer {
-        width: 360px;
-        height: 300px;
-        border: 6px solid white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-size: 70px;
-        font-weight: bold;
-        color: white;
-        background-color: #650409;
-        border-radius: 20px;
-        text-align: center;
-    }
+  .timer {
+    width: 360px;
+    height: 300px;
+    border: 6px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    font-weight: bold;
+    color: white;
+    background-color: #650409;
+    border-radius: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
 
-.team-name {
+  .team-name {
     font-size: 30px;
     font-weight: bold;
     color: white;
     cursor: pointer;
     margin-bottom: 20px;
     text-align: center;
-}
+  }
 
-    .team-input {
-        font-size: 30px;
-        font-weight: bold;
-        width: 80%;
-        text-align: center;
-        border: none;
-        outline: none;
-    }
+  .team-input {
+    font-size: 30px;
+    font-weight: bold;
+    width: 80%;
+    text-align: center;
+    border: none;
+    outline: none;
+  }
 
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        margin-top: 60px;
-    }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+  }
 
-    .row {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 
-    button {
-        background-color: #F8AF00;
-        color: black;
-        border: none;
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        width: auto;
-        max-width: 120px;
-    }
+  button {
+    background-color: #F8AF00;
+    color: black;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    width: auto;
+    max-width: 120px;
+  }
 
-    .selected {
-        border: 8px solid #F8AF00;
-    }
+  .selected {
+    border: 8px solid #F8AF00;
+  }
 
-    /* Alleen voor view=display */
-    body.display-mode {
-        padding: 60px 20px;
-    }
+  /* Alleen voor view=display */
+  body.display-mode {
+    padding: 60px 20px;
+  }
 
-    .display-mode .timer-container {
-        margin: 60px auto;
-        max-width: 1000px;
-        padding: 0 20px;
-    }
+  body.display-mode .timer-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 60px auto;
+    padding: 0 20px;
+    max-width: 1000px;
+  }
 
-    /* Responsieve styling alleen voor NIET-display mode */
-  @media (max-width: 768px) {
-    body:not(.display-mode) .timer {
-        width: 260px;
-        height: 230px;
-        font-size: 50px;
-    }
-
-    body:not(.display-mode) .team-name {
-        font-size: 18px;
-    }
-
-    body:not(.display-mode) .controls {
-        width: 90%;
-    }
-
-    body:not(.display-mode) .timer-container {
-        flex-direction: row;
-    }
-
-    body:not(.display-mode) button {
-        font-size: 12px;
-    }
-}
-
-/* ✨ Altijd voor view=display, onafhankelijk van schermformaat */
-body.display-mode .timer {
+  /* ✨ Timers in display-mode, ook mobiel */
+  body.display-mode .timer {
     width: 360px;
     height: 300px;
     font-size: 70px;
-}
+  }
+
+  @media (max-width: 768px) {
+    body.display-mode .timer {
+      width: 260px;
+      height: 230px;
+      font-size: 50px;
+    }
+
+    body.display-mode .team-name {
+      font-size: 18px;
+    }
+
+    body:not(.display-mode) .timer {
+      width: 260px;
+      height: 230px;
+      font-size: 50px;
+    }
+
+    body:not(.display-mode) .team-name {
+      font-size: 18px;
+    }
+
+    body:not(.display-mode) .controls {
+      width: 90%;
+    }
+
+    body:not(.display-mode) .timer-container {
+      flex-direction: row;
+    }
+
+    body:not(.display-mode) button {
+      font-size: 12px;
+    }
+  }
 
   #dsk-logo {
-  display: none;
-  margin: 40px auto 20px;
-  width: 200px;
-}
+    display: none;
+    margin: 40px auto 20px;
+    width: 200px;
+  }
 
-body.display-mode #dsk-logo {
-  display: block;
-}
+  body.display-mode #dsk-logo {
+    display: block;
+  }
 </style>
+
 </head>
 <body>
     <div id="audio-init-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.9;z-index:9999;color:#fff;display:flex;justify-content:center;align-items:center;font-size:24px;cursor:pointer;">
