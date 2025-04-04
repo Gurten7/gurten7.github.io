@@ -401,11 +401,11 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('slimste/service-worker.js')
     .then(() => console.log('✅ Service Worker geregistreerd'))
     .catch(err => console.error('❌ Service Worker fout:', err));
-}
+    }
+  });
 </script>
-
-<style>
-  body {
+    <style>
+    body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #650409;
