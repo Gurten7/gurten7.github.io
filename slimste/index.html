@@ -46,15 +46,21 @@
     }
 
   // ✅ Audio-initialisatie overlay (tegen NotAllowedError)
-  document.getElementById("audio-init-overlay").addEventListener("click", () => {
-    [timerSound, timerEndSound, finaleSound].forEach(audio => {
-      audio.play().then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-      }).catch(console.log);
+  const audioInitOverlay = document.getElementById("audio-init-overlay");
+  if (audioInitOverlay) {
+    audioInitOverlay.addEventListener("click", () => {
+      [timerSound, timerEndSound, finaleSound].forEach(audio => {
+        audio.play().then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }).catch(console.log);
+      });
+      audioInitOverlay.style.display = "none";
     });
-    document.getElementById("audio-init-overlay").style.display = "none";
-  });
+  } else {
+    console.error('Element met id "audio-init-overlay" is niet gevonden.');
+  }
+});
 
   // 🔽 daarna volgt je firebaseConfig + de rest van je script
 
