@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="nl">
-<!DOCTYPE html>
-<html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- ✅ App icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="slimste/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="slimste/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="slimste/icon-192.png" />
+  
+  <!-- ✅ Theme kleur -->
+  <meta name="theme-color" content="#650409" />
 
-  <!-- ✅ App iconen -->
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="icon-192.png" />
+  <!-- ✅ Dynamisch manifest afhankelijk van view -->
+  <script>
+    const view = new URLSearchParams(window.location.search).get("view");
+    const manifest = view === "edit" 
+      ? "manifest-edit.json" 
+      : view === "display" 
+      ? "manifest-display.json" 
+      : "manifest.json"; // fallback
 
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = `slimste/${manifest}`;
+    document.head.appendChild(link);
+  </script>
 
-  <!-- PWA manifest + kleur -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#650409">
-
-  <title>De slimste kameraad</title>
-
-  <!-- Firebase SDK -->
+  <!-- ✅ Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <title>De Slimste Kameraad</title>
+</head>
 <script defer>
   document.addEventListener("DOMContentLoaded", () => {
     const isDisplayMode = new URLSearchParams(window.location.search).get("view") === "display";
