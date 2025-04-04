@@ -2,28 +2,30 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   
-<!-- ✅ App icons --> 
-<link rel="icon" type="image/png" sizes="192x192" href="slimste/icon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="slimste/icon-512.png" />
-<link rel="apple-touch-icon" sizes="192x192" href="slimste/icon-192.png" />
-<link rel="apple-touch-icon" sizes="512x512" href="slimste/icon-512.png" />
-<link rel="shortcut icon" href="slimste/icon-192.png" />
-  
-  <!-- ✅ Theme kleur -->
+  <!-- ✅ App title & theme -->
+  <title>De Slimste Kameraad</title>
   <meta name="theme-color" content="#650409" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Slimste Kameraad" />
 
-  <!-- ✅ Dynamisch manifest afhankelijk van view -->
+  <!-- ✅ App icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="slimste/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="slimste/icon-512.png" />
+  <link rel="apple-touch-icon" href="slimste/icon-192.png" />
+  <link rel="shortcut icon" href="slimste/icon-192.png" />
+
+  <!-- ✅ Dynamisch manifest (view=edit / view=display) -->
   <script>
     const view = new URLSearchParams(window.location.search).get("view");
     const manifest = view === "edit" 
       ? "manifest-edit.json" 
       : view === "display" 
       ? "manifest-display.json" 
-      : "manifest.json"; // fallback
-
+      : "manifest.json";
     const link = document.createElement("link");
     link.rel = "manifest";
     link.href = `slimste/${manifest}`;
@@ -33,8 +35,6 @@
   <!-- ✅ Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-  <title>De Slimste Kameraad</title>
 </head>
 <script defer>
   document.addEventListener("DOMContentLoaded", () => {
