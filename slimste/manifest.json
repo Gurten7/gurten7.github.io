@@ -1,10 +1,10 @@
 {
   "name": "De Slimste Kameraad",
   "short_name": "Slimste Kameraad",
-  "start_url": "index.html",
+  "start_url": "/slimste/index",
   "display": "standalone",
-  "background_color": "#650409",   // ✨ Splash screen kleur
-  "theme_color": "#650409",        // ✨ Bovenbalk en systeemkleur
+  "background_color": "#650409",
+  "theme_color": "#650409",
   "description": "De officiële timer voor De Slimste Kameraad!",
   "icons": [
     {
