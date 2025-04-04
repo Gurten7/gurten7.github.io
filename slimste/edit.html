@@ -1,1 +1,19 @@
-
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <link rel="manifest" href="manifest-edit.json" />
+  <meta name="theme-color" content="#650409" />
+  <title>Display | Slimste Kameraad</title>
+  <script defer src="index.js"></script> <!-- of je script direct hier -->
+</head>
+<body>
+  <script>
+    // Zorg dat edit wordt doorgegeven
+   if (!location.search.includes("view=edit")) {
+  location.href = "index?view=edit";
+}
+    }
+  </script>
+</body>
+</html>
