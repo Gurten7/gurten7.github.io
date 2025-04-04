@@ -347,14 +347,14 @@
         text-align: center;
     }
 
-.team-name {
-    font-size: 30px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 20px;
-    text-align: center;
-}
+    .team-name {
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
     .team-input {
         font-size: 30px;
@@ -406,69 +406,44 @@
         padding: 0 20px;
     }
 
-    /* Responsieve styling alleen voor NIET-display mode */
-  @media (max-width: 768px) {
-    body:not(.display-mode) .timer {
-        width: 260px;
-        height: 230px;
-        font-size: 50px;
+    /* Responsieve styling voor mobiele schermen (voor zowel edit- als display-modus) */
+    @media (max-width: 768px) {
+        body:not(.display-mode) .timer-container {
+            flex-wrap: wrap;
+            justify-content: center; /* Zorg ervoor dat de timers netjes in het midden uitlijnen */
+        }
+
+        body:not(.display-mode) .timer {
+            width: 100%; /* Zorg ervoor dat de timer de volledige breedte van het scherm gebruikt */
+            max-width: 280px; /* Beperk de maximale breedte van de timer */
+            height: auto;
+            font-size: 50px; /* Verklein de tekstgrootte voor kleinere schermen */
+        }
+
+        body:not(.display-mode) .team-name {
+            font-size: 18px; /* Pas de teamnaam aan voor een betere weergave op mobiele apparaten */
+        }
+
+        body:not(.display-mode) .controls {
+            width: 90%;
+        }
+
+        body:not(.display-mode) .timer-container {
+            flex-direction: column;
+        }
+
+        body:not(.display-mode) button {
+            font-size: 12px;
+        }
+
+        /* Zorg ervoor dat timers in de display modus ook goed schalen op mobiele schermen */
+        body.display-mode .timer {
+            width: 100%;
+            max-width: 360px;
+            height: auto;
+            font-size: 50px;
+        }
     }
-
-    body:not(.display-mode) .team-name {
-        font-size: 18px;
-    }
-
-    body:not(.display-mode) .controls {
-        width: 90%;
-    }
-
-    body:not(.display-mode) .timer-container {
-        flex-direction: row;
-    }
-
-    body:not(.display-mode) button {
-        font-size: 12px;
-    }
-}
-
-/* ✨ Altijd voor view=display, onafhankelijk van schermformaat */
-body.display-mode .timer {
-    width: 360px;
-    height: 300px;
-    font-size: 70px;
-}
-
-/* Responsieve styling voor mobiele schermen */
-@media (max-width: 768px) {
-    body:not(.display-mode) .timer-container {
-        flex-wrap: wrap;
-        justify-content: center; /* Zorg ervoor dat de timers netjes in het midden uitlijnen */
-    }
-
-    body:not(.display-mode) .timer {
-        width: 100%; /* Zorg ervoor dat de timer de volledige breedte van het scherm gebruikt */
-        max-width: 280px; /* Beperk de maximale breedte van de timer */
-        height: auto;
-        font-size: 50px; /* Verklein de tekstgrootte voor kleinere schermen */
-    }
-
-    body:not(.display-mode) .team-name {
-        font-size: 18px; /* Pas de teamnaam aan voor een betere weergave op mobiele apparaten */
-    }
-
-    body:not(.display-mode) .controls {
-        width: 90%;
-    }
-
-    body:not(.display-mode) .timer-container {
-        flex-direction: column;
-    }
-
-    body:not(.display-mode) button {
-        font-size: 12px;
-    }
-}
-
 </style>
 </head>
 <body>
