@@ -398,288 +398,163 @@ function resetTimer() {
       document.getElementById("timerSelect").setAttribute("disabled", true);
     }
 // ✅ Service Worker registratie voor PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('slimste/service-worker.js')
-      .then(() => console.log('✅ Service Worker geregistreerd'))
-      .catch(err => console.error('❌ Service Worker fout:', err));
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('slimste/service-worker.js')
+    .then(() => console.log('✅ Service Worker geregistreerd'))
+    .catch(err => console.error('❌ Service Worker fout:', err));
 }
-     });
- </script>
-   <style>
-   body {
-     font-family: Arial, sans-serif;
-     text-align: center;
-     background-color: #650409;
-     margin: 0;
-   }
- 
-   h1 {
-     font-size: 80px;
-     display: none;
-   }
-  /* Basis styling */
- body {
-   font-family: Arial, sans-serif;
-   text-align: center;
-   background-color: #650409;
-   margin: 0;
- }
- 
-   .timer-container {
-     display: flex;
-     justify-content: center;
-     gap: 20px;
-     margin-bottom: 20px;
-     flex-wrap: nowrap;
-     overflow-x: auto;
-   }
- h1 {
-   font-size: 80px;
-   display: none;
- }
- 
-   .timer {
-     width: 360px;
-     height: 300px;
-     border: 6px solid white;
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-     font-size: 70px;
-     font-weight: bold;
-     color: white;
-     background-color: #650409;
-     border-radius: 20px;
-     text-align: center;
-     flex-shrink: 0;
-   }
- .timer-container {
-   display: flex;
-   justify-content: center;
-   gap: 20px;
-   margin-bottom: 20px;
-   flex-wrap: nowrap;
-   overflow-x: auto;
- }
- 
-   .team-name {
-     font-size: 30px;
-     font-weight: bold;
-     color: white;
-     cursor: pointer;
-     margin-bottom: 20px;
-     text-align: center;
-   }
- .timer {
-   width: 360px;
-   height: 300px;
-   border: 6px solid white;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   font-size: 70px;
-   font-weight: bold;
-   color: white;
-   background-color: #650409;
-   border-radius: 20px;
-   text-align: center;
-   flex-shrink: 0;
- }
- 
-   .team-input {
-     font-size: 30px;
-     font-weight: bold;
-     width: 80%;
-     text-align: center;
-     border: none;
-     outline: none;
-   }
- .team-name {
-   font-size: 30px;
-   font-weight: bold;
-   color: white;
-   cursor: pointer;
-   margin-bottom: 20px;
-   text-align: center;
- }
- 
-   .controls {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     gap: 10px;
-     margin-top: 60px;
-   }
- .team-input {
-   font-size: 30px;
-   font-weight: bold;
-   width: 80%;
-   text-align: center;
-   border: none;
-   outline: none;
- }
- 
-   .row {
-     display: flex;
-     justify-content: center;
-     gap: 10px;
-     flex-wrap: wrap;
-   }
- .controls {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 10px;
-   margin-top: 60px;
- }
- 
-   button {
-     background-color: #F8AF00;
-     color: black;
-     border: none;
-     padding: 10px;
-     font-size: 14px;
-     border-radius: 5px;
-     width: auto;
-     max-width: 120px;
-   }
- .row {
-   display: flex;
-   justify-content: center;
-   gap: 10px;
-   flex-wrap: wrap;
- }
- 
-   .selected {
-     border: 8px solid #F8AF00;
-   }
- button {
-   background-color: #F8AF00;
-   color: black;
-   border: none;
-   padding: 10px;
-   font-size: 14px;
-   border-radius: 5px;
-   width: auto;
-   max-width: 120px;
- }
- 
-   /* Alleen voor view=display */
-   body.display-mode {
-     padding: 60px 20px;
-   }
- .selected {
-   border: 8px solid #F8AF00;
- }
- 
-   body.display-mode .timer-container {
-     display: flex;
-     justify-content: center;
-     flex-wrap: wrap;
-     gap: 20px;
-     margin: 60px auto;
-     padding: 0 20px;
-     max-width: 1000px;
-   }
- /* Alleen voor view=display */
- body.display-mode {
-   padding: 60px 20px;
- }
- 
-   /* ✨ Timers in display-mode, ook mobiel */
-   body.display-mode .timer {
-     width: 360px;
-     height: 300px;
-     font-size: 70px;
-   }
- body.display-mode .timer-container {
-   display: flex;
-   justify-content: center;
-   flex-wrap: wrap;
-   gap: 20px;
-   margin: 60px auto;
-   padding: 0 20px;
-   max-width: 100%;
- }
- 
-   @media (max-width: 768px) {
-     body.display-mode .timer {
-       width: 260px;
-       height: 230px;
-       font-size: 50px;
-     }
- /* Timers in display-mode, ook mobiel */
- body.display-mode .timer {
-   width: 360px;
-   height: 300px;
-   font-size: 70px;
- }
- 
-     body.display-mode .team-name {
-       font-size: 18px;
-     }
- @media (max-width: 768px) {
-   /* Responsieve styling voor zowel display- als niet-displaymodus */
- 
-     body:not(.display-mode) .timer {
-       width: 260px;
-       height: 230px;
-       font-size: 50px;
-     }
-   /* Voor de display-modus */
-   body.display-mode .timer {
-     width: 100%;  /* Zorg ervoor dat de timers de volledige breedte gebruiken */
-     max-width: 260px;  /* Beperk de maximale breedte voor mobiele apparaten */
-     font-size: 40px;  /* Verklein de tekstgrootte op kleinere schermen */
-   }
- 
-     body:not(.display-mode) .team-name {
-       font-size: 18px;
-     }
-   body.display-mode .team-name {
-     font-size: 18px;  /* Verklein de naam van het team op kleinere schermen */
-   }
- 
-     body:not(.display-mode) .controls {
-       width: 90%;
-     }
-   /* Voor de niet-displaymodus (editmodus) */
-   body:not(.display-mode) .timer {
-     width: 260px;
-     height: 230px;
-     font-size: 50px;  /* Verklein de timergrootte */
-   }
- 
-     body:not(.display-mode) .timer-container {
-       flex-direction: row;
-     }
-   body:not(.display-mode) .team-name {
-     font-size: 18px;  /* Verklein de naam van het team in edit-modus */
-   }
- 
-     body:not(.display-mode) button {
-       font-size: 12px;
-     }
-   body:not(.display-mode) .controls {
-     width: 90%;  /* Zorg ervoor dat de knoppen goed passen op kleinere schermen */
-   }
- 
-   #dsk-logo {
-     display: none;
-     margin: 40px auto 20px;
-     width: 200px;
-   body:not(.display-mode) .timer-container {
-     flex-direction: row;
-   }
- 
-   body.display-mode #dsk-logo {
-     display: block;
-   body:not(.display-mode) button {
-     font-size: 12px;
-   }
- </style>
+});
+</script>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #650409;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 80px;
+    display: none;
+  }
+
+  .timer-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .timer {
+    width: 360px;
+    height: 300px;
+    border: 6px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    font-weight: bold;
+    color: white;
+    background-color: #650409;
+    border-radius: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .team-name {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .team-input {
+    font-size: 30px;
+    font-weight: bold;
+    width: 80%;
+    text-align: center;
+    border: none;
+    outline: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    background-color: #F8AF00;
+    color: black;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    width: auto;
+    max-width: 120px;
+  }
+
+  .selected {
+    border: 8px solid #F8AF00;
+  }
+
+  /* Alleen voor view=display */
+  body.display-mode {
+    padding: 60px 20px;
+  }
+
+  body.display-mode .timer-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 60px auto;
+    padding: 0 20px;
+    max-width: 100%;
+  }
+
+  body.display-mode .timer {
+    width: 360px;
+    height: 300px;
+    font-size: 70px;
+  }
+
+  @media (max-width: 768px) {
+    body.display-mode .timer {
+      width: 100%; /* Zorg ervoor dat de timers de volledige breedte gebruiken */
+      max-width: 260px; /* Beperk de maximale breedte voor mobiele apparaten */
+      font-size: 40px; /* Verklein de tekstgrootte op kleinere schermen */
+    }
+
+    body.display-mode .team-name {
+      font-size: 18px; /* Verklein de naam van het team op kleinere schermen */
+    }
+
+    body:not(.display-mode) .timer {
+      width: 260px;
+      height: 230px;
+      font-size: 50px; /* Verklein de timergrootte */
+    }
+
+    body:not(.display-mode) .team-name {
+      font-size: 18px; /* Verklein de naam van het team in edit-modus */
+    }
+
+    body:not(.display-mode) button {
+      font-size: 12px;
+    }
+
+    body:not(.display-mode) .controls {
+      width: 90%; /* Zorg ervoor dat de knoppen goed passen op kleinere schermen */
+    }
+  }
+
+  #dsk-logo {
+    display: none;
+    margin: 40px auto 20px;
+    width: 200px;
+  }
+
+  body.display-mode #dsk-logo {
+    display: block;
+  }
+</style>
+
  }
  
  /* Logo zichtbaar maken in display-modus */
