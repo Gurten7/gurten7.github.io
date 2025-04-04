@@ -5,31 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   
   <!-- ✅ App title & theme -->
-  <title>De Slimste Kameraad</title>
-  <meta name="theme-color" content="#650409" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Slimste Kameraad" />
+<title>De Slimste Kameraad</title>
+<meta name="theme-color" content="#650409" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Slimste Kameraad" />
 
-  <!-- ✅ App icons -->
-  <link rel="icon" type="image/png" sizes="192x192" href="slimste/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="slimste/icon-512.png" />
-  <link rel="apple-touch-icon" href="slimste/icon-192.png" />
-  <link rel="shortcut icon" href="slimste/icon-192.png" />
+<!-- ✅ App icons (gebruik altijd absolute paden vanaf de root) -->
+<link rel="icon" type="image/png" sizes="192x192" href="/slimste/icon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/slimste/icon-512.png" />
+<link rel="apple-touch-icon" sizes="192x192" href="/slimste/icon-192.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="/slimste/icon-512.png" />
+<link rel="shortcut icon" href="/slimste/icon-192.png" />
 
-  <!-- ✅ Dynamisch manifest (view=edit / view=display) -->
-  <script>
-    const view = new URLSearchParams(window.location.search).get("view");
-    const manifest = view === "edit" 
-      ? "manifest-edit.json" 
-      : view === "display" 
-      ? "manifest-display.json" 
-      : "manifest.json";
-    const link = document.createElement("link");
-    link.rel = "manifest";
-    link.href = `slimste/${manifest}`;
-    document.head.appendChild(link);
+<!-- ✅ Dynamische manifest-koppeling -->
+<script>
+  const view = new URLSearchParams(window.location.search).get("view");
+  const manifest = view === "edit"
+    ? "/slimste/manifest-edit.json"
+    : view === "display"
+    ? "/slimste/manifest-display.json"
+    : "/slimste/manifest.json"; // fallback
+
+  const link = document.createElement("link");
+  link.rel = "manifest";
+  link.href = manifest;
+  document.head.appendChild(link);
   </script>
 
   <!-- ✅ Firebase SDK -->
