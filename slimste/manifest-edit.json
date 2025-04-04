@@ -1,7 +1,10 @@
+// ✅ manifest-display.json
+// Plaats dit in slimste/manifest-display.json
+/*
 {
-  "name": "Slimste Kameraad Edit",
-  "short_name": "Edit",
-  "start_url": "/slimste/index?view=edit",
+  "name": "Slimste Kameraad Display",
+  "short_name": "Display",
+  "start_url": "/slimste/?view=display",
   "display": "standalone",
   "theme_color": "#650409",
   "background_color": "#650409",
@@ -18,3 +21,4 @@
     }
   ]
 }
+*/
