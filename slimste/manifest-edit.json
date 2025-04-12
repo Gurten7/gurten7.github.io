@@ -1,8 +1,7 @@
-/* ✅ manifest-edit.json */
 {
   "name": "Slimste Kameraad Edit",
   "short_name": "Edit",
-  "start_url": "/slimste/edit.html",
+  "start_url": "/slimste/?view=edit",
   "display": "standalone",
   "theme_color": "#650409",
   "background_color": "#650409",
