@@ -1,8 +1,7 @@
-/* ✅ manifest-display.json */
 {
   "name": "Slimste Kameraad Display",
   "short_name": "Display",
-  "start_url": "/slimste/display.html",
+  "start_url": "/slimste/?view=display",
   "display": "standalone",
   "theme_color": "#650409",
   "background_color": "#650409",
