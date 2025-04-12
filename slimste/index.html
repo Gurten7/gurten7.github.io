@@ -255,10 +255,23 @@
     }
 
     function slaNieuweTeamnaamOp(index, nieuweNaam) {
-      if (nieuweNaam.trim() !== "") teamNamen[index] = nieuweNaam;
-      updateWeergave();
-      updateDatabase();
-    }
+  const inputEl = document.querySelector(`#team-name-${index}.team-input`);
+  if (nieuweNaam.trim() !== "") {
+    teamNamen[index] = nieuweNaam;
+  }
+
+  if (inputEl) {
+    const nieuwNaamDiv = document.createElement("div");
+    nieuwNaamDiv.id = `team-name-${index}`;
+    nieuwNaamDiv.classList.add("team-name");
+    nieuwNaamDiv.textContent = teamNamen[index];
+    nieuwNaamDiv.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
+    inputEl.replaceWith(nieuwNaamDiv);
+  }
+
+  updateWeergave();
+  updateDatabase();
+}
 
     function updateDatabase() {
       firebase.database().ref("timers").set({
