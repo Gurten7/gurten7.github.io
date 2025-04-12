@@ -123,29 +123,32 @@
       }
     }
 
-    function updateWeergave() {
-      timers.forEach((tijd, index) => {
-        const timerElement = document.getElementById(`timer${index}`);
-        if (timerElement) timerElement.textContent = tijd;
-
-        const teamNaamEl = document.getElementById(`team-name-${index}`);
-        if (teamNaamEl) {
-          if (teamNaamEl.tagName.toLowerCase() === "input") {
-            let nieuwNaamDiv = document.createElement("div");
-            nieuwNaamDiv.id = `team-name-${index}`;
-            nieuwNaamDiv.classList.add("team-name");
-            nieuwNaamDiv.textContent = teamNamen[index];
-            nieuwNaamDiv.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
-            teamNaamEl.replaceWith(nieuwNaamDiv);
-          } else {
-            teamNaamEl.textContent = teamNamen[index];
-            teamNaamEl.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
-          }
+     // ⬇️ Voeg dit toe:
+  if (!isDisplayMode) {
+    document.getElementById("updateTeamNamesBtn").addEventListener("click", () => {
+      for (let i = 0; i < 4; i++) {
+        const input = document.getElementById(`teamInput${i}`);
+        if (input && input.value.trim() !== "") {
+          teamNamen[i] = input.value.trim();
         }
+      }
+      updateWeergave();
+      updateDatabase();
+    });
+  }
+});
 
-        document.getElementById(`timer-container-${index}`).style.display = zichtbareTimers[index] ? "block" : "none";
-      });
-    }
+   function updateWeergave() {
+  timers.forEach((tijd, index) => {
+    const timerElement = document.getElementById(`timer${index}`);
+    if (timerElement) timerElement.textContent = tijd;
+
+    const teamNaamEl = document.getElementById(`team-name-${index}`);
+    if (teamNaamEl) teamNaamEl.textContent = teamNamen[index];
+
+    document.getElementById(`timer-container-${index}`).style.display = zichtbareTimers[index] ? "block" : "none";
+  });
+}
 
     function selecteerTimer(index) {
       if (intervals[geselecteerdeTimer]) return;
@@ -235,53 +238,6 @@
         alert("Voer een geldig aantal seconden in (minimaal 0)");
       }
     }
-
- function maakTeamnaamBewerkbaar(index) {
-  let naamLabel = document.getElementById(`team-name-${index}`);
-  if (naamLabel && naamLabel.tagName.toLowerCase() !== "input") {
-    let inputVeld = document.createElement("input");
-    inputVeld.type = "text";
-    inputVeld.value = teamNamen[index];
-    inputVeld.classList.add("team-input");
-    inputVeld.style.fontSize = "30px";
-    inputVeld.style.width = "80%";
-    inputVeld.style.textAlign = "center";
-
-    // iOS optimalisatie
-    inputVeld.setAttribute("autocorrect", "off");
-    inputVeld.setAttribute("autocomplete", "off");
-    inputVeld.setAttribute("autocapitalize", "words");
-
-    naamLabel.replaceWith(inputVeld);
-    inputVeld.focus();
-
-    inputVeld.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        inputVeld.blur();
-      }
-    });
-
-    // iOS fix: blur forceren als toetsenbord sluit
-    const blurWatcher = setInterval(() => {
-      if (document.activeElement !== inputVeld) {
-        clearInterval(blurWatcher);
-        inputVeld.blur();
-      }
-    }, 300);
-
-    inputVeld.addEventListener("blur", () => {
-      clearInterval(blurWatcher);
-      slaNieuweTeamnaamOp(index, inputVeld.value);
-    });
-  }
-}
-
-function slaNieuweTeamnaamOp(index, nieuweNaam) {
-  if (nieuweNaam.trim() !== "") teamNamen[index] = nieuweNaam;
-  updateWeergave();
-  updateDatabase();
-}
-
 
 
     function updateDatabase() {
@@ -555,6 +511,20 @@ body.display-mode .timer {
       font-size: inherit;
       font-weight: bold;
   }
+      
+      #teamnaam-formulier input.team-input {
+  width: 140px;
+  font-size: 16px;
+  padding: 8px;
+  text-align: center;
+  margin: 5px;
+}
+
+#updateTeamNamesBtn {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
 </style>
 </head>
 <body>
@@ -619,6 +589,17 @@ body.display-mode .timer {
                 <option value="2">Timer 3</option>
                 <option value="3">Timer 4</option>
             </select>
+
+          <!-- 🔤 Teamnamen handmatig instellen -->
+<div class="controls hide-if-needed" id="teamnaam-formulier">
+  <div class="row">
+    <input type="text" id="teamInput0" placeholder="Team 1 naam" class="team-input" />
+    <input type="text" id="teamInput1" placeholder="Team 2 naam" class="team-input" />
+    <input type="text" id="teamInput2" placeholder="Team 3 naam" class="team-input" />
+    <input type="text" id="teamInput3" placeholder="Team 4 naam" class="team-input" />
+  </div>
+  <button id="updateTeamNamesBtn">Teamnamen doorvoeren</button>
+</div>
             <button id="toggleBtn" class="hide-if-needed">Zichtbaar ja/nee</button>
             <input type="number" id="timeInput" placeholder="Voer seconden in" class="hide-if-needed">
             <button id="setTimeBtn" class="hide-if-needed">Doorvoeren</button>
