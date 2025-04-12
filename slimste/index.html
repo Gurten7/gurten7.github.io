@@ -235,43 +235,52 @@
       }
     }
 
-    function maakTeamnaamBewerkbaar(index) {
-      let naamLabel = document.getElementById(`team-name-${index}`);
-      if (naamLabel && naamLabel.tagName.toLowerCase() !== "input") {
-        let inputVeld = document.createElement("input");
-        inputVeld.type = "text";
-        inputVeld.value = teamNamen[index];
-        inputVeld.classList.add("team-input");
-        inputVeld.style.fontSize = "30px";
-        inputVeld.style.width = "80%";
-        inputVeld.style.textAlign = "center";
-        naamLabel.replaceWith(inputVeld);
-        inputVeld.focus();
-        inputVeld.addEventListener("blur", () => slaNieuweTeamnaamOp(index, inputVeld.value));
-        inputVeld.addEventListener("keydown", (event) => {
-          if (event.key === "Enter") inputVeld.blur();
-        });
+  function maakTeamnaamBewerkbaar(index) {
+  let naamLabel = document.getElementById(`team-name-${index}`);
+  if (naamLabel && naamLabel.tagName.toLowerCase() !== "input") {
+    let inputVeld = document.createElement("input");
+    inputVeld.type = "text";
+    inputVeld.value = teamNamen[index];
+    inputVeld.classList.add("team-input");
+    inputVeld.style.fontSize = "30px";
+    inputVeld.style.width = "80%";
+    inputVeld.style.textAlign = "center";
+
+    // iOS optimalisatie
+    inputVeld.setAttribute("autocorrect", "off");
+    inputVeld.setAttribute("autocomplete", "off");
+    inputVeld.setAttribute("autocapitalize", "words");
+
+    naamLabel.replaceWith(inputVeld);
+    inputVeld.focus();
+
+    inputVeld.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        inputVeld.blur();
       }
-    }
+    });
 
-    function slaNieuweTeamnaamOp(index, nieuweNaam) {
-  const inputEl = document.querySelector(`#team-name-${index}.team-input`);
-  if (nieuweNaam.trim() !== "") {
-    teamNamen[index] = nieuweNaam;
+    // iOS fix: blur forceren als toetsenbord sluit
+    const blurWatcher = setInterval(() => {
+      if (document.activeElement !== inputVeld) {
+        clearInterval(blurWatcher);
+        inputVeld.blur();
+      }
+    }, 300);
+
+    inputVeld.addEventListener("blur", () => {
+      clearInterval(blurWatcher);
+      slaNieuweTeamnaamOp(index, inputVeld.value);
+    });
   }
+}
 
-  if (inputEl) {
-    const nieuwNaamDiv = document.createElement("div");
-    nieuwNaamDiv.id = `team-name-${index}`;
-    nieuwNaamDiv.classList.add("team-name");
-    nieuwNaamDiv.textContent = teamNamen[index];
-    nieuwNaamDiv.addEventListener("click", () => maakTeamnaamBewerkbaar(index));
-    inputEl.replaceWith(nieuwNaamDiv);
-  }
-
+function slaNieuweTeamnaamOp(index, nieuweNaam) {
+  if (nieuweNaam.trim() !== "") teamNamen[index] = nieuweNaam;
   updateWeergave();
   updateDatabase();
 }
+
 
     function updateDatabase() {
       firebase.database().ref("timers").set({
