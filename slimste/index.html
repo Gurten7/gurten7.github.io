@@ -470,28 +470,56 @@ body.display-mode .timer {
   }
 }
 
+  .timer-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+  }
+
+  .timer-value {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: inherit;
+      font-weight: bold;
+  }
+</style>
+
 </style>
 </head>
 <body>
     <h1>De Slimste Kameraad</h1>
     <div class="timer-container">
-        <div class="timer" id="timer-container-0">
+    <div class="timer" id="timer-container-0">
+        <div class="timer-inner">
             <div id="team-name-0" class="team-name">Team 1</div>
-            <div id="timer0">60</div>
-        </div>
-        <div class="timer" id="timer-container-1">
-            <div id="team-name-1" class="team-name">Team 2</div>
-            <div id="timer1">60</div>
-        </div>
-        <div class="timer" id="timer-container-2">
-            <div id="team-name-2" class="team-name">Team 3</div>
-            <div id="timer2">60</div>
-        </div>
-        <div class="timer" id="timer-container-3">
-            <div id="team-name-3" class="team-name">Team 4</div>
-            <div id="timer3">60</div>
+            <div id="timer0" class="timer-value">60</div>
         </div>
     </div>
+    <div class="timer" id="timer-container-1">
+        <div class="timer-inner">
+            <div id="team-name-1" class="team-name">Team 2</div>
+            <div id="timer1" class="timer-value">60</div>
+        </div>
+    </div>
+    <div class="timer" id="timer-container-2">
+        <div class="timer-inner">
+            <div id="team-name-2" class="team-name">Team 3</div>
+            <div id="timer2" class="timer-value">60</div>
+        </div>
+    </div>
+    <div class="timer" id="timer-container-3">
+        <div class="timer-inner">
+            <div id="team-name-3" class="team-name">Team 4</div>
+            <div id="timer3" class="timer-value">60</div>
+        </div>
+    </div>
+</div>
 
 <audio id="timerSound" preload="auto">
     <source src="https://gurten7.github.io/slimste/timer-sound.mp3" type="audio/mp3">
