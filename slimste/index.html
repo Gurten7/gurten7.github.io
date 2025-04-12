@@ -235,7 +235,7 @@
       }
     }
 
-  function maakTeamnaamBewerkbaar(index) {
+ function maakTeamnaamBewerkbaar(index) {
   let naamLabel = document.getElementById(`team-name-${index}`);
   if (naamLabel && naamLabel.tagName.toLowerCase() !== "input") {
     let inputVeld = document.createElement("input");
@@ -280,6 +280,7 @@ function slaNieuweTeamnaamOp(index, nieuweNaam) {
   updateWeergave();
   updateDatabase();
 }
+
 
 
     function updateDatabase() {
