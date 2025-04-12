@@ -1,12 +1,49 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>De Slimste Kameraad</title>
-    <!-- Oude versie van Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 🧠 Titel -->
+  <title>De Slimste Kameraad</title>
+
+  <!-- 📲 App-kleur in adresbalk / taakbalk -->
+  <meta name="theme-color" content="#650409" />
+
+  <!-- 📦 Dynamisch manifest (op basis van ?view=edit of ?view=display) -->
+  <script>
+    const view = new URLSearchParams(location.search).get("view");
+    const manifest = view === "display"
+      ? "manifest-display.json"
+      : "manifest-edit.json";
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = manifest;
+    document.head.appendChild(link);
+  </script>
+
+  <!-- 📱 Apple homescreen support -->
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Slimste Kameraad" />
+
+  <!-- 🖼️ Favicon (fallback) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+
+  <!-- 🔥 Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <!-- 🛡️ Service Worker registratie -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log("✅ Service worker geregistreerd"))
+        .catch(err => console.error("❌ Service worker fout:", err));
+    }
+  </script>
+</head>
 <script defer>
   document.addEventListener("DOMContentLoaded", () => {
     const isDisplayMode = new URLSearchParams(window.location.search).get("view") === "display";
@@ -344,7 +381,7 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 70px;
+  font-size: 90px;
   font-weight: bold;
   color: white;
   background-color: #650409;
