@@ -285,45 +285,67 @@
       });
     }
 
-    function checkAndInitializeDatabase() {
-      const db = firebase.database();
-      db.ref("timers").once("value", snap => { if (!snap.exists()) db.ref("timers").set({ team1: 60, team2: 60, team3: 60, team4: 60 }); });
-      db.ref("teamNames").once("value", snap => { if (!snap.exists()) db.ref("teamNames").set({ team1: "Team 1", team2: "Team 2", team3: "Team 3", team4: "Team 4" }); });
-      db.ref("selectedTimer").once("value", snap => { if (!snap.exists()) db.ref("selectedTimer").set(0); });
-      db.ref("timerVisibility").once("value", snap => { if (!snap.exists()) db.ref("timerVisibility").set({ timer1: true, timer2: true, timer3: true, timer4: true }); });
-    }
-
-    checkAndInitializeDatabase();
     syncTimers();
-    syncVisibility();
-    hideIfNeeded();
+syncVisibility();
+hideIfNeeded();
 
-    if (!isDisplayMode) {
-      document.querySelectorAll(".timer").forEach((el, index) => {
-        el.addEventListener("click", () => selecteerTimer(index));
+// Zet standaarddata alleen als ze echt nog niet bestaan
+function checkAndInitializeDatabase() {
+  const db = firebase.database();
+
+  db.ref("timers").once("value", snap => {
+    if (!snap.exists()) {
+      db.ref("timers").set({
+        team1: 60,
+        team2: 60,
+        team3: 60,
+        team4: 60
       });
-      document.getElementById("timerSelect").addEventListener("change", (e) => selecteerTimer(parseInt(e.target.value)));
-      document.getElementById("startBtn").addEventListener("click", () => {
-        timerStatusRef.set("start");
-        document.getElementById("timerSelect").setAttribute("disabled", true);
+      db.ref("teamNames").set({
+        team1: "Team 1",
+        team2: "Team 2",
+        team3: "Team 3",
+        team4: "Team 4"
       });
-      document.getElementById("stopBtn").addEventListener("click", () => {
-        timerStatusRef.set("stop");
-        document.getElementById("timerSelect").removeAttribute("disabled");
+      db.ref("selectedTimer").set(0);
+      db.ref("timerVisibility").set({
+        timer1: true,
+        timer2: true,
+        timer3: true,
+        timer4: true
       });
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        timerStatusRef.set("reset");
-        document.getElementById("timerSelect").removeAttribute("disabled");
-      });
-      document.getElementById("toggleBtn").addEventListener("click", toggleTimerZichtbaarheid);
-      document.getElementById("setTimeBtn").addEventListener("click", stelAangepasteTijdIn);
-      document.querySelectorAll(".adjust-time").forEach(btn => {
-        btn.addEventListener("click", () => pasTijdAan(parseInt(btn.dataset.amount)));
-      });
-    } else {
-      document.getElementById("timerSelect").setAttribute("disabled", true);
     }
   });
+}
+checkAndInitializeDatabase();
+
+if (!isDisplayMode) {
+  document.querySelectorAll(".timer").forEach((el, index) => {
+    el.addEventListener("click", () => selecteerTimer(index));
+  });
+  document.getElementById("timerSelect").addEventListener("change", (e) => selecteerTimer(parseInt(e.target.value)));
+  document.getElementById("startBtn").addEventListener("click", () => {
+    timerStatusRef.set("start");
+    document.getElementById("timerSelect").setAttribute("disabled", true);
+  });
+  document.getElementById("stopBtn").addEventListener("click", () => {
+    timerStatusRef.set("stop");
+    document.getElementById("timerSelect").removeAttribute("disabled");
+  });
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    timerStatusRef.set("reset");
+    document.getElementById("timerSelect").removeAttribute("disabled");
+  });
+  document.getElementById("toggleBtn").addEventListener("click", toggleTimerZichtbaarheid);
+  document.getElementById("setTimeBtn").addEventListener("click", stelAangepasteTijdIn);
+  document.querySelectorAll(".adjust-time").forEach(btn => {
+    btn.addEventListener("click", () => pasTijdAan(parseInt(btn.dataset.amount)));
+  });
+} else {
+  document.getElementById("timerSelect").setAttribute("disabled", true);
+}
+});
+  
 </script>
     <style>
    /* 🌍 Basisstijl */
